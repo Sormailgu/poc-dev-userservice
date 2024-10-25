@@ -15,7 +15,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 
-# Expose port 80
+# Expose ports 80 and 443
 EXPOSE 80
+EXPOSE 443
+
 
 ENTRYPOINT ["dotnet", "UserService.dll"]
