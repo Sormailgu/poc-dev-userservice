@@ -1,0 +1,33 @@
+{
+  "descriptionHash": "132CD1D18AEC7863C627B39EEA925200287E7D54734F44116CE38EEE8F908586298567403A3C50D745642EB80CD0EF0E48E047ED8BD169E31AE669988009790F",
+  "descriptionLocation": "../OpenAPI/api-description.yaml",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.18.0",
+  "clientClassName": "FinancialServiceClient",
+  "clientNamespaceName": "FinancialService.Client",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": false,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}
