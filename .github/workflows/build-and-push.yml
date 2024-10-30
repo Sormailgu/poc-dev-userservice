@@ -1,11 +1,16 @@
 name: Build and Push Docker Image to ECR
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  workflow_dispatch:  # Enable manual triggering
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+  # workflow_dispatch:  # Enable manual triggering
+  
+  workflow_run:
+    workflows: ["Code Scan"]
+    types:
+      - completed
 
 jobs:
   build-and-push:
@@ -38,29 +43,6 @@ jobs:
       - name: Get version code
         id: get-version-code
         run: echo "::set-output name=version-code::$(cat VERSION.txt)"
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-
-      - name: Install SonarQube Scanner
-        run: |
-          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-          unzip sonar-scanner.zip
-          sudo mv sonar-scanner-4.6.2.2472-linux /opt/sonar-scanner
-          sudo ln -s /opt/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner
-
-      - name: Run SonarQube Analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=my-project-key \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Build, tag, and push Docker image
         env:
