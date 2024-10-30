@@ -1,10 +1,11 @@
-name: Build and Push Docker image to AWS ECR
+name: Build and Push Docker Image to ECR
 
 on:
   push:
     branches:
       - develop
-  workflow_dispatch:  # Add this line to enable manual triggering
+      - main
+  workflow_dispatch:  # Enable manual triggering
 
 jobs:
   build-and-push:
@@ -20,7 +21,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -34,16 +35,34 @@ jobs:
         id: get-commit-hash
         run: echo "::set-output name=commit-hash::$(git rev-parse --short HEAD)"
       
-      - name: Get timestamp
-        id: get-timestamp
-        run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d-%H-%M')"
+      - name: Get version code
+        id: get-version-code
+        run: echo "::set-output name=version-code::$(cat VERSION.txt)"
+
+      - name: Install SonarQube Scanner
+        run: |
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+          unzip sonar-scanner.zip
+          export PATH=$PATH:$(pwd)/sonar-scanner-4.6.2.2472-linux/bin
+
+      - name: Run SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=my-project-key \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Build, tag, and push Docker image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: poc-dev/userservice
-          IMAGE_TAG: ${{ steps.get-commit-hash.outputs.commit-hash }}-${{ steps.get-timestamp.outputs.timestamp }}
-
+          COMMIT_HASH: ${{ steps.get-commit-hash.outputs.commit-hash }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          VERSION_CODE: ${{ steps.get-version-code.outputs.version-code }}
         run: |
+          IMAGE_TAG=${VERSION_CODE}-${COMMIT_HASH}-${GITHUB_RUN_NUMBER}
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
