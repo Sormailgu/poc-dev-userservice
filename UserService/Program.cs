@@ -43,6 +43,9 @@ builder.Services.AddHttpClient<ConfigureServiceClientFactory>((sp, client) => {
 // Register the ConfigureService client
 builder.Services.AddTransient(sp => sp.GetRequiredService<ConfigureServiceClientFactory>().GetClient());
 
+// Register the IUserService and its implementation with scoped lifetime
+builder.Services.AddScoped<IUserService, UserService.Services.UserService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
