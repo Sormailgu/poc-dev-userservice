@@ -1,14 +1,13 @@
 name: Build and Push Docker Image to ECR
 
 on:
-  workflow_run:
-    workflows: ["Code Scan"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+      - develop
 
 jobs:
   build-and-push:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
