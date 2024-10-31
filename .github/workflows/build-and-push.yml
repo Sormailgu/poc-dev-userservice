@@ -20,6 +20,15 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Restore dependencies
+        run: dotnet restore UserService.sln
+
+      - name: Build solution
+        run: dotnet build --no-restore --configuration Release UserService.sln
+
+      - name: Run unit tests
+        run: dotnet test --no-build --configuration Release UserService.sln
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -48,5 +57,5 @@ jobs:
           VERSION_CODE: ${{ steps.get-version-code.outputs.version-code }}
         run: |
           IMAGE_TAG=${VERSION_CODE}-${COMMIT_HASH}-${GITHUB_RUN_NUMBER}
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f UserService/Dockerfile .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
