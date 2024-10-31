@@ -15,14 +15,14 @@ public class FinancialServiceClientWrapper : IFinancialServiceClientWrapper
         return await _client.AccountBalance[userId].GetAsync();
     }
 
-    public async Task<AccountBalanceResponseDto> UpdateBalanceAsync(int userId, UpdateBalanceRequestDto requestDto) {
-        return await _client.AccountBalance[userId].UpdateBalanceAsync(requestDto);
+    // public async Task<AccountBalanceResponseDto> UpdateBalanceAsync(int userId, UpdateBalanceRequestDto requestDto) {
+    //     return await _client.AccountBalance[userId].UpdateBalanceAsync(requestDto);
 
-    }
+    // }
 
-    public async Task<AccountBalanceResponseDto> CreateAccountBalanceAsync(int userId, CreateAccountBalanceRequestDto requestDto) {
-        return await _client.AccountBalanceRequestBuilder.PostAsync(requestDto);
-    }
+    // public async Task<AccountBalanceResponseDto> CreateAccountBalanceAsync(int userId, CreateAccountBalanceRequestDto requestDto) {
+    //     return await _client.AccountBalanceRequestBuilder.PostAsync(requestDto);
+    // }
 
     public async Task DisableAccountAsync(int userId)
     {
